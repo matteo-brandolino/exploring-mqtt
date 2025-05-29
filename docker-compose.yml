@@ -1,0 +1,30 @@
+services:
+  emqx:
+    image: emqx/emqx
+    container_name: emqx
+    ports:
+      - "1883:1883"
+      - "18083:18083"
+
+  web:
+    image: nginx:alpine
+    container_name: web
+    ports:
+      - "8080:80"
+    volumes:
+      - ./web:/usr/share/nginx/html:ro
+    depends_on:
+      - emqx
+
+  server:
+    build: ./server
+    container_name: fastify-server
+    working_dir: /app
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+    command: sh -c "pnpm install && pnpm run dev"
+    ports:
+      - "3000:3000"
+    depends_on:
+      - emqx

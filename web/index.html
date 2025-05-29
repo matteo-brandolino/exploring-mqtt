@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Chat MQTT + WebSocket</title>
+  </head>
+  <body>
+    <h1>Chat Test</h1>
+    <input id="msg" placeholder="Scrivi..." />
+    <button onclick="send()">Invia</button>
+    <ul id="chat"></ul>
+
+    <script>
+      function generateClientId() {
+        return "xxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxx".replace(/[xy]/g, (c) => {
+          const r = (Math.random() * 16) | 0,
+            v = c === "x" ? r : (r & 0x3) | 0x8;
+          return v.toString(16);
+        });
+      }
+      const ws = new WebSocket("ws://localhost:3000/chat");
+      const clientId = generateClientId();
+      const chat = document.getElementById("chat");
+      console.info(`ClientId: ${clientId}`);
+
+      ws.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+
+        const li = document.createElement("li");
+        li.textContent =
+          data.from === clientId
+            ? `My message: ${data.msg}`
+            : `From: ${data.from} ${data.msg}`;
+        chat.appendChild(li);
+      };
+
+      function send() {
+        const msg = document.getElementById("msg").value;
+
+        ws.send(JSON.stringify({ from: clientId, msg }));
+      }
+    </script>
+  </body>
+</html>
