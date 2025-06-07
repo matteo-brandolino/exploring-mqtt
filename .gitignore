@@ -1,3 +1,4 @@
 server/node_modules
 server/.pnpm-store
 server/pnpm-lock.yaml
+.env

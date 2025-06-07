@@ -20,6 +20,9 @@ services:
     build: ./server
     container_name: fastify-server
     working_dir: /app
+    environment:
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET}
     volumes:
       - ./server:/app
       - /app/node_modules
